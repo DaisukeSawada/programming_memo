@@ -170,7 +170,203 @@ Collection
             2 種類のカテゴリの型を導入して、必要に応じてオブジェクト指向に代わる
             パフォーマンスの高い代替手段を提供しますが、値型を正しく実装するには
             開発者の多大な労力が必要になります。
-        
+
+LINQ
+    シーケンス
+        クエリ操作対象のデータをシーケンスという。IEnumerable<T>インターフェースを実装する
+        オブジェクトはシーケンスとみなされる。
+
+拡張メソッド
+    既存の型にメソッドを追加できる。
+    public static StringExtentions{
+        public static string Reverse(this string str){
+            ～～
+        }
+    }
+    
+    とすると、
+    string name = "AAA DDD";
+    name.Reverse();
+    とできる。
+
+初期化
+    ・配列
+        var langs = new string[] { "C#", "VB", "C ++", };
+        var nums = new List < int > { 10, 20, 30, 40, };
+    ※従来どおりの以下の書き方だと、入れ替えとか間に追加が手間になる。
+        string[] langs = new string[3];
+        langs[0] = "C#";
+        langs[1] = "VB";
+        langs[2] = "C ++";
+
+    ・ディクショナリ
+        var dict = new Dictionary < string, string >() {
+            ["ja"] = "日本語",
+            ["en"] = "英語",
+            ["es"] = "スペイン語",
+            ["de"] = "ドイツ 語",
+        };
+
+    ・オブジェクトの初期化
+        var person = new Person {
+            Name        = "新井 遥 菜",
+            Birthday    = new DateTime( 1995, 11, 23),
+            PhoneNumber = "012-3456-7890",
+        }
+
+    ・プロパティの初期化
+        public int MinimumLength { get; set; } = 6;
+
+        ※もし初期化を遅延させたいことがあれば以下のようにする。
+        private string _name; 参照型の初期値はnullが保証されている
+        public string Name {
+            get {
+                if (_name == null)
+                    _name = GetNameFromFile();
+                    return _name;
+            }
+    ・ファイルパスの初期化
+        var path = ＠"C:\Example\Greeting.txt";
+
+複数のコンストラクタ
+    public AppVersion( int major, int minor)
+     : this( major, minor, 0, 0) { 引数 4 つ の コンス トラクタ を 呼び出す }
+    thisを使って梟雄かする。
+
+条件
+    変数とリテラルの大小比較
+        if (age <= 10) { …… }
+        変数を左に書く。
+
+    変数の範囲比較 MIN、変数、MAXと書く
+        if (MinValue <= num && num <= MaxValue)
+
+    returnでふるいにかけていく
+        if (filePath == null)
+            return;
+        if (GetOption() == Option. Skip)
+            return;
+        if (targetType != originalType)
+            return;
+        ～やりたい処理～
+
+    bool値がtrueか判定する
+        if (num. HasValue) {
+
+コレクションの要素をすべて取り出す
+    var items = new [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    foreach (var n in items) {
+         Console. WriteLine( n);
+    }
+
+    List<T>のすべての要素に対して処理をする
+    var nums = new List < int > { 1, 2, 3, 4, 5 };
+    nums.ForEach( n => Console. Write("[{ 0}] ", n));
+
+    ForEachメソッドは1行で書ける短い処理で使う
+    優先度的にはForEach、foreach、for
+
+null合体演算子
+    var message = GetMessage(code)
+    if (message == null)
+        message = DefaultMessage();
+    ではなく、
+    var message = GetMessage(code) ?? DefaultMessage();
+
+null合体演算子
+    if (sale == null)
+        return null;
+    else
+        return sale.Product;
+
+    ではなく、
+    return sale?. Product;
+
+文字列を数値に変換する
+    int height;
+    if (int. TryParse( str, out height)) {
+
+    なお、文字列に数値文字列が入っていることが保証されていれば、
+    以下のコードを使っても問題ありません。
+    int height = int. Parse( str);
+
+参照型のキャスト
+    var product = Session[" MyProduct"] as Product;
+    if (product == null) {
+
+例外を再スローする
+    try {
+         　︙
+    } catch (FileNotFoundException ex) { 変数exには、例外オブジェクトが格納されている。
+     例外オブジェクトを参照することで、例外の詳細情報を知ることができる
+     
+     // 例外 情報 を 使っ た 何らかの 処理
+      　︙ throw; 例外 の 再 スロー }
+      
+    以下のように書いた場合は、例外のスタックトレース情報が消えてしまい、
+    デバッグに支障をきたすこになります。
+    try {
+        　︙
+    } catch (FileNotFoundException ex) {
+        // 例外 情報 を 使っ た 何らかの 処理 　︙
+        throw ex; このように書いてはいけない
+    }
+
+usingを使ったリソースの破棄
+    IDisposableインターフェイスを実装しているクラス
+    using (var stream = new StreamReader( filePath)) { StreamReaderは、IDisposableインターフェイスを実装している
+        var texts = stream. ReadToEnd(); ︙ // ここ で、 読み取っ た データ の 処理 }
+
+文字列
+    ・大小比較なし
+        if (String. Compare( str 1, str 2, ignoreCase: true) == 0)
+
+    ・ひらがな/カタカナの区別なく比較する
+        if (String. Compare( str 1, str 2, cultureInfo, CompareOptions. IgnoreKanaType) == 0)
+
+    ・nullあるいは空文字列かを調べる
+        if (String. IsNullOrEmpty( str))
+
+    ・指定した部分文字列で始まっているか調べる
+        if (str. StartsWith(" Visual")) {
+
+    ・指定した部分文字列が含まれているか調べる
+        if (str. Contains(" Program")) {
+
+    ・すべて の 文字 が ある 条件 を 満たし て いる か 調べる
+        var isAllDigits = target. All( c => Char. IsDigit( c));
+
+    ・StringBuilder を 使っ た 文字列 の 連結
+        文字列は不変オブジェクトのため、連結したりする旅に新しいオブジェクトが作られる
+
+        var sb = new StringBuilder(); StringBuilderオブジェクトを生成
+        foreach (var word in GetWords()) {
+            sb. Append( word); 文字列 を 追加
+        }
+        var text = sb.ToString(); 文字列 に 変換 Console.
+        WriteLine( text);
 
 
 
+出井 秀行. 実戦で役立つ C#プログラミングのイディオム/定石&パターン (Kindle の位置No.3696-3700). 株式会社技術評論社. Kindle 版. 
+出井 秀行. 実戦で役立つ C#プログラミングのイディオム/定石&パターン (Kindle の位置No.3673-3674). 株式会社技術評論社. Kindle 版. 
+
+
+
+
+
+
+出井 秀行. 実戦で役立つ C#プログラミングのイディオム/定石&パターン (Kindle の位置No.3498-3499). 株式会社技術評論社. Kindle 版. 
+
+出井 秀行. 実戦で役立つ C#プログラミングのイディオム/定石&パターン (Kindle の位置No.3497). 株式会社技術評論社. Kindle 版. 
+
+
+
+出井 秀行. 実戦で役立つ C#プログラミングのイディオム/定石&パターン (Kindle の位置No.3453). 株式会社技術評論社. Kindle 版. 
+
+出井 秀行. 実戦で役立つ C#プログラミングのイディオム/定石&パターン (Kindle の位置No.3452). 株式会社技術評論社. Kindle 版. 
+
+
+※
+参考
+https://www.slideshare.net/neuecc/cedec-2018-c-c
